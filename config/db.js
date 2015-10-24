@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var config = {
   "db": "emoney",  
   "host": "localhost",  
-  "user": "root",
+  "user": "",
   "pw": "",
   "port": 27017
 };
