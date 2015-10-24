@@ -16,7 +16,7 @@ run via the Makefile with `make` or use phantomjs main.js on terminal
 Running `grunt test` will run the unit tests with karma.
 
 ## Documentation ##
-Running 'grunt jsdoc' will generate documentation in the "documentation" directory
+Running `grunt jsdoc` will generate documentation in the "documentation" directory
 
 ### Also See ###
 [Financial Advisor App](https://github.com/jaaimino/financial-advisor-app)
