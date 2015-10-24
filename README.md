@@ -1,4 +1,5 @@
 # Financial Advisor Scraper
+[![Build Status](https://travis-ci.org/jaaimino/financial-advisor-scraper.svg)](https://travis-ci.org/jaaimino/financial-advisor-scraper)
 
 This component will scrape data from sites and put it into the database.
 
