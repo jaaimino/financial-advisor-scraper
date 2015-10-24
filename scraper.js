@@ -1,11 +1,12 @@
-/*
- * This module assumes 'browser' (phantomjs WebPage)
- * and 'phantom' (phantomjs Phantom) objects are
- * defined as global variables.
+/**
+ * This module is an abstraction on top of PhantomJS for easy scraping
+ * @class Scraper API
  */
-
 var scraper = {};
 
+/**
+ * Scraper mode
+ */
 scraper.mode = "start";
 
 function amazon_first() {
@@ -38,6 +39,9 @@ scraper.demo = function() {
         });
 };
 
+/**
+ * Go back to the home page of the site
+ */
 scraper.goHome = function() {
     switch(scraper.mode) {
     case "start":
@@ -57,6 +61,9 @@ scraper.goHome = function() {
     }
 };
 
+/**
+ * Log in to the site
+ */
 scraper.login = function() {
     switch(scraper.mode) {
     case "start":
@@ -84,6 +91,9 @@ scraper.loginAuth = function() {
     // fill in credentials
 };
 
+/**
+ * Do prelogin tasks
+ */
 scraper.preLogin = function(username, password, callback, answers) {
     scraper.mode = "start";
     scraper.username = username;
@@ -92,6 +102,9 @@ scraper.preLogin = function(username, password, callback, answers) {
     scraper.mfCreds = answers;
 };
 
+/**
+ * Scrape basic accounts
+ */
 scraper.scrapeEmoneyBasicAccounts = function() {
     console.log("basic accounts scrape");
     data = browser.evaluate(
@@ -121,14 +134,23 @@ scraper.scrapeEmoneyBasicAccounts = function() {
     }
 };
 
+/**
+ * Scrape loans
+ */
 scraper.scrapeEmoneyLoans = function() {
     console.log("loans scrape");
 };
 
+/**
+ * Scrape investments
+ */
 scraper.scrapeEmoneyInvestments = function() {
     console.log("investments scrape");
 };
 
+/**
+ * Scrape all accounts
+ */
 scraper.emoneyAccountsScrape = function() {
     scraper.scrapeEmoneyBasicAccounts();
     scraper.scrapeEmoneyLoans();

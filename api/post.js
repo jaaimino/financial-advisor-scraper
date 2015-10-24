@@ -5,7 +5,7 @@ var express = require('express'),
     Post = mongoose.models.Post,
     api = {};
 
-// ALL
+
 api.posts = function (req, res) {
   Post.find(function(err, posts) {
     if (err) {

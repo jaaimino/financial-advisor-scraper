@@ -44,6 +44,16 @@ module.exports = function(grunt) {
       server: {
         url: 'http://localhost:' + grunt.config.get('express.options.port')
       }
+    },
+    jsdoc : {
+        dist : {
+            src: ['*.js','routes/*.js', 'models/*.js', 'config/*.js','api/*.js', 'README.md'],
+            options: {
+                destination : 'documentation',
+                   template : "node_modules/ink-docstrap/template",
+                  configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"
+            }
+        }
     }
   });
 
@@ -67,7 +77,17 @@ module.exports = function(grunt) {
       ]);
     }
   });
-  grunt.registerTask('default', [ 'server' ]);
-  grunt.registerTask('dist', [ 'server:prod' ]);
 
-};
+  grunt.registerTask('default', [ 
+    'test',
+    'jsdoc' 
+    ]);
+
+  grunt.registerTask('serve', [ 
+    'server', 
+    'jsdoc' 
+    ]);
+  grunt.registerTask('dist', [ 
+    'server:prod', 
+    'jsdoc' ]);
+    };
