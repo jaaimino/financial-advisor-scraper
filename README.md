@@ -1,4 +1,4 @@
-# Emoney Advisor Scraper
+# Financial Advisor Scraper
 
 This component will scrape data from sites and put it into the database.
 
