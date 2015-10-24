@@ -3,7 +3,7 @@
 
 This component will scrape data from sites and put it into the database.
 
-## Build & development ##
+## Build & Development ##
 
 Run `grunt` for building and `grunt serve` for preview.
 
