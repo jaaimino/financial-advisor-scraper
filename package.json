@@ -13,7 +13,7 @@
     "errorhandler": "latest"
 	},
 	"devDependencies": {
-    "grunt": "latest",
+    "grunt": "~0.4.4",
     "grunt-mocha-test": "latest",
     "bower": "latest",
     "supertest": "latest",
@@ -24,8 +24,8 @@
     "load-grunt-tasks": "^0.4.0"
 	},
   "scripts": {
-    "postinstall": "grunt test",
-    "test" : "grunt test",
-    "start": "app.js"
-  }
+    "start": "app.js",
+    "test": "grunt test",
+    "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
+  },
 }
