@@ -53,7 +53,7 @@ scraper.goHome = function() {
         console.log("clicking logout button");
         scraper.mode = "athome";
         browser.onLoadFinished = scraper.callback;
-        browser.evaluate(
+	browser.evaluate(
             function() {
                 window.location.href = document.querySelector("#loginLink").href;
             });
@@ -67,10 +67,10 @@ scraper.goHome = function() {
 scraper.login = function() {
     switch(scraper.mode) {
     case "start":
-        scraper.callback = scraper.login;
+	scraper.callback = scraper.login;        
         console.log("calling goHome!");
         scraper.goHome();
-        break;
+	break;
     case "athome":
         scraper.mode = "loggedin"
         browser.onLoadFinished = scraper.login;
@@ -139,6 +139,29 @@ scraper.scrapeEmoneyBasicAccounts = function() {
  */
 scraper.scrapeEmoneyLoans = function() {
     console.log("loans scrape");
+    data = browser.evaluate(
+        function() {
+            var data = {};
+            data.names = [];
+            data.numbers = [];
+            data.descriptions = [];
+            data.balances = [];
+            data.types = [];
+            var table = document.getElementById("loanAccountsTable");
+            for (var i=1, row; row=table.rows[i]; i++) {
+                data.names.push(row.cells[0].innerText);
+                data.numbers.push(row.cells[1].innerText);
+                data.descriptions.push(row.cells[2].innerText);
+                data.balances.push(row.cells[3].innerText);
+                data.types.push(row.cells[4].innerText);
+            }
+            return data;
+        });
+    for (var i=0; i<data.names.length; i++) {
+        console.log(data.names[i] + ", " + data.numbers[i] + ", " +
+                    data.descriptions[i] + ", " + data.balances[i] + ", " +
+                    data.types[i]);
+    }
 };
 
 /**
@@ -146,6 +169,35 @@ scraper.scrapeEmoneyLoans = function() {
  */
 scraper.scrapeEmoneyInvestments = function() {
     console.log("investments scrape");
+    /* same as loans table but add a condition to check if 
+    this table exist then scrape */
+    /*
+    data = browser.evaluate(
+    function() {
+        var data = {};
+        data.names = [];
+        data.numbers = [];
+        data.descriptions = [];
+        data.availBalances = [];
+        data.totalBalances = [];
+        data.types = [];
+        var table = document.getElementById("investmentAccountsTable");
+        for (var i=1, row; row=table.rows[i]; i++) {
+            data.names.push(row.cells[0].innerText);
+            data.numbers.push(row.cells[1].innerText);
+            data.descriptions.push(row.cells[2].innerText);
+            data.balance.push(row.cells[4].innerText);
+            data.types.push(row.cells[5].innerText);
+        }
+        return data;
+    })
+    for (var i=0; i<data.names.length; i++) {
+    console.log(data.names[i] + ", " + data.numbers[i] + ", " +
+                data.descriptions[i] + ", " + data.availBalances[i] + ", " +
+                data.totalBalances[i] + ", " + data.types[i]);
+    */
+    /* Should also be able to click on hyperlinks on name and scrape
+    the bank transaction table */
 };
 
 /**
@@ -154,7 +206,7 @@ scraper.scrapeEmoneyInvestments = function() {
 scraper.emoneyAccountsScrape = function() {
     scraper.scrapeEmoneyBasicAccounts();
     scraper.scrapeEmoneyLoans();
-    scraper.scrapeEmoneyInvestments();
+    //scraper.scrapeEmoneyInvestments();
     phantom.exit();
 };
 

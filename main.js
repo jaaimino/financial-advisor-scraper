@@ -3,7 +3,7 @@ var system = require("system");
 var browser = require("webpage").create();
 browser.viewportSize = {
     width: 1920,
-    height: 1080
+    height: 1200
     /* 4k is for chumps */
 };
 
@@ -38,7 +38,7 @@ function post() {
 
 // login
 answers = [];
-scraper.preLogin("Test", "Test", scraper.emoneyAccountsScrape, answers);
+scraper.preLogin("Test2", "Test2", scraper.emoneyAccountsScrape, answers);
 scraper.login();
 
 // goto different sites
