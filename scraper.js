@@ -171,31 +171,30 @@ scraper.scrapeEmoneyInvestments = function() {
     console.log("investments scrape");
     /* same as loans table but add a condition to check if 
     this table exist then scrape */
-    /*
-    data = browser.evaluate(
+    
+    data = Browser.evaluate(
     function() {
         var data = {};
         data.names = [];
         data.numbers = [];
         data.descriptions = [];
-        data.availBalances = [];
-        data.totalBalances = [];
+        data.balance = [];
         data.types = [];
         var table = document.getElementById("investmentAccountsTable");
         for (var i=1, row; row=table.rows[i]; i++) {
             data.names.push(row.cells[0].innerText);
             data.numbers.push(row.cells[1].innerText);
             data.descriptions.push(row.cells[2].innerText);
-            data.balance.push(row.cells[4].innerText);
-            data.types.push(row.cells[5].innerText);
+            data.balance.push(row.cells[3].innerText);
+            data.types.push(row.cells[4].innerText);
         }
         return data;
     })
     for (var i=0; i<data.names.length; i++) {
     console.log(data.names[i] + ", " + data.numbers[i] + ", " +
-                data.descriptions[i] + ", " + data.availBalances[i] + ", " +
-                data.totalBalances[i] + ", " + data.types[i]);
-    */
+                data.descriptions[i] + ", " + data.balance[i] + ", " + 
+		data.types[i]);
+}    
     /* Should also be able to click on hyperlinks on name and scrape
     the bank transaction table */
 };
@@ -203,11 +202,21 @@ scraper.scrapeEmoneyInvestments = function() {
 /**
  * Scrape all accounts
  */
-scraper.emoneyAccountsScrape = function() {
-    scraper.scrapeEmoneyBasicAccounts();
-    scraper.scrapeEmoneyLoans();
-    //scraper.scrapeEmoneyInvestments();
-    phantom.exit();
+scraper.emoneyAccountsScrape = function() 
+{
+    	if(document.getElementById("basicAccountsTable") != null)
+	{
+		scraper.scrapeEmoneyBasicAccounts();
+	}
+	if(document.getElementById("loanAccountsTable") != null)
+	{
+		scraper.scrapeEmoneyLoans();
+	}    
+	if(document.getElementById("investmentAccountsTable") != null)
+	{
+		scraper.scrapeEmoneyInvestments();
+    	}
+	phantom.exit();
 };
 
 module.exports = scraper;
