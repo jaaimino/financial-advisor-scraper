@@ -34,7 +34,7 @@ scraper.demo = function() {
                     });
             }
             else {
-                phantom.exit();
+                return;
             }
         });
 };
@@ -67,7 +67,7 @@ scraper.goHome = function() {
 scraper.login = function() {
     switch(scraper.mode) {
     case "start":
-	scraper.callback = scraper.login;        
+	scraper.callback = scraper.login;
         console.log("calling goHome!");
         scraper.goHome();
 	break;
@@ -117,6 +117,7 @@ scraper.scrapeEmoneyBasicAccounts = function() {
             data.totalBalances = [];
             data.types = [];
             var table = document.getElementById("basicAccountsTable");
+	    if (table != null){
             for (var i=1, row; row=table.rows[i]; i++) {
                 data.names.push(row.cells[0].innerText);
                 data.numbers.push(row.cells[1].innerText);
@@ -126,12 +127,16 @@ scraper.scrapeEmoneyBasicAccounts = function() {
                 data.types.push(row.cells[5].innerText);
             }
             return data;
-        });
+        }
+	else {phantom.exit();}
+	});
+	console.log(data.table+"=====\n\n");
     for (var i=0; i<data.names.length; i++) {
         console.log(data.names[i] + ", " + data.numbers[i] + ", " +
                     data.descriptions[i] + ", " + data.availBalances[i] + ", " +
                     data.totalBalances[i] + ", " + data.types[i]);
     }
+	console.log("==============================\n");
 };
 
 /**
@@ -141,6 +146,7 @@ scraper.scrapeEmoneyLoans = function() {
     console.log("loans scrape");
     data = browser.evaluate(
         function() {
+		console.log("1");
             var data = {};
             data.names = [];
             data.numbers = [];
@@ -148,6 +154,7 @@ scraper.scrapeEmoneyLoans = function() {
             data.balances = [];
             data.types = [];
             var table = document.getElementById("loanAccountsTable");
+	    if (table != null){
             for (var i=1, row; row=table.rows[i]; i++) {
                 data.names.push(row.cells[0].innerText);
                 data.numbers.push(row.cells[1].innerText);
@@ -156,12 +163,16 @@ scraper.scrapeEmoneyLoans = function() {
                 data.types.push(row.cells[4].innerText);
             }
             return data;
-        });
+        }
+	else {phantom.exit();}
+	});
     for (var i=0; i<data.names.length; i++) {
         console.log(data.names[i] + ", " + data.numbers[i] + ", " +
                     data.descriptions[i] + ", " + data.balances[i] + ", " +
                     data.types[i]);
     }
+	console.log("==============================\n");
+
 };
 
 /**
@@ -169,10 +180,10 @@ scraper.scrapeEmoneyLoans = function() {
  */
 scraper.scrapeEmoneyInvestments = function() {
     console.log("investments scrape");
-    /* same as loans table but add a condition to check if 
+    /* same as loans table but add a condition to check if
     this table exist then scrape */
-    
-    data = Browser.evaluate(
+
+    data = browser.evaluate(
     function() {
         var data = {};
         data.names = [];
@@ -181,7 +192,9 @@ scraper.scrapeEmoneyInvestments = function() {
         data.balance = [];
         data.types = [];
         var table = document.getElementById("investmentAccountsTable");
-        for (var i=1, row; row=table.rows[i]; i++) {
+	if (table == null) {return null;}
+        else{
+	for (var i=1, row; row=table.rows[i]; i++) {
             data.names.push(row.cells[0].innerText);
             data.numbers.push(row.cells[1].innerText);
             data.descriptions.push(row.cells[2].innerText);
@@ -189,33 +202,27 @@ scraper.scrapeEmoneyInvestments = function() {
             data.types.push(row.cells[4].innerText);
         }
         return data;
-    })
-    for (var i=0; i<data.names.length; i++) {
-    console.log(data.names[i] + ", " + data.numbers[i] + ", " +
-                data.descriptions[i] + ", " + data.balance[i] + ", " + 
+	}
+	});
+	if (data == null) {return null;}
+	for (var i=0; i<data.names.length; i++) {
+    	console.log(data.names[i] + ", " + data.numbers[i] + ", " +
+                data.descriptions[i] + ", " + data.balance[i] + ", " +
 		data.types[i]);
-}    
-    /* Should also be able to click on hyperlinks on name and scrape
-    the bank transaction table */
+}
+    	/* Should also be able to click on hyperlinks on name and scrape
+    	the bank transaction table */
+        console.log("==============================\n");
 };
 
 /**
  * Scrape all accounts
  */
-scraper.emoneyAccountsScrape = function() 
+scraper.emoneyAccountsScrape = function()
 {
-    	if(document.getElementById("basicAccountsTable") != null)
-	{
-		scraper.scrapeEmoneyBasicAccounts();
-	}
-	if(document.getElementById("loanAccountsTable") != null)
-	{
-		scraper.scrapeEmoneyLoans();
-	}    
-	if(document.getElementById("investmentAccountsTable") != null)
-	{
-		scraper.scrapeEmoneyInvestments();
-    	}
+	scraper.scrapeEmoneyBasicAccounts();
+	scraper.scrapeEmoneyLoans();
+	scraper.scrapeEmoneyInvestments();
 	phantom.exit();
 };
 

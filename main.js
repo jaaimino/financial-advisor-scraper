@@ -39,6 +39,7 @@ function post() {
 // login
 answers = [];
 scraper.preLogin("Test2", "Test2", scraper.emoneyAccountsScrape, answers);
+//scraper.preLogin("OneMFCred", "OneMFCred", scraper.emoneyAccountsScrape, answers);
 scraper.login();
 
 // goto different sites
