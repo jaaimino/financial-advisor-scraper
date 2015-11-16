@@ -1,23 +1,23 @@
-# Financial Advisor Scraper
-[![Build Status](https://travis-ci.org/jaaimino/financial-advisor-scraper.svg)](https://travis-ci.org/jaaimino/financial-advisor-scraper)
+# Financial Advisor App #
+[![Build Status](https://travis-ci.org/jaaimino/financial-advisor-app.svg?branch=master)](https://travis-ci.org/jaaimino/financial-advisor-app)
 
-This component will scrape data from sites and put it into the database.
+This repo is for the app side of the financial advisor app project for my final software engineering
+course at UD.
+
+### What do I need? ###
+* NodeJS
+* MongoDB
+* Grunt: `npm install -g grunt-cli`
 
 ## Build & Development ##
+Make sure mongodb is running
 
-Run `grunt` for building and `grunt serve` for preview.
+Run `npm install` and `bower install`
 
-Another option is to install PhantomJS `sudo apt-get install phantomjs`
+Run `grunt serve` to preview
 
-run via the Makefile with `make` or use phantomjs main.js on terminal
-
-## Testing ##
-
+### Testing ###
 Running `grunt test` will run the unit tests with karma.
 
-## Documentation ##
-Running `grunt jsdoc` will generate documentation in the "documentation" directory
-
 ### Also See ###
-[Financial Advisor App](https://github.com/jaaimino/financial-advisor-app)
-
+[Financial Advisor Scraper](https://github.com/jaaimino/financial-advisor-scraper)

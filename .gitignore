@@ -1,6 +1,8 @@
 node_modules
-dist
+public
 .tmp
-.sass-cache
-/bower_components
+.idea
+dist
 documentation
+config/local.env.js
+npm-debug.log

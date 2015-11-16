@@ -1,4 +1,3 @@
 {
-    "directory": "public/bower_components",
-    "interactive" : false
+    "directory": "client/bower_components"
 }
