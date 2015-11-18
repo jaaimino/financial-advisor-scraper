@@ -11,7 +11,7 @@ var scrape = require('../../scrape/scrape');
 
 // Get list of accounts
 exports.index = function(req, res) {
-  scrape.login();
+  scrape.scrape();
   Client.find(function (err, clients) {
     if(err) { return handleError(res, err); }
     //console.log(clients);
