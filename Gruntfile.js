@@ -69,7 +69,7 @@ module.exports = function (grunt) {
         tasks: ['injector:css']
       },
       mochaTest: {
-        files: ['server/**/*.spec.js'],
+        files: ['api/**/*.spec.js', 'scrape/**/*.spec.js', 'models/**/*.spec.js'],
         tasks: ['env:test', 'mochaTest']
       },
       jsTest: {
@@ -128,7 +128,7 @@ module.exports = function (grunt) {
         options: {
           jshintrc: '.jshintrc-spec'
         },
-        src: ['**/*.spec.js']
+        src: ['api/**/*.spec.js', 'scrape/**/*.spec.js', 'models/**/*.spec.js']
       },
       all: [
         '<%= yeoman.client %>/{app,components}/**/*.js',
@@ -431,7 +431,7 @@ module.exports = function (grunt) {
       options: {
         reporter: 'spec'
       },
-      src: ['**/*.spec.js']
+      src: ['api/**/*.spec.js', 'scrape/**/*.spec.js', 'models/**/*.spec.js']
     },
 
     protractor: {
