@@ -34,12 +34,12 @@ module.exports = function (grunt) {
     },
     express: {
       options: {
-        port: process.env.PORT || 8080
+        port: process.env.PORT || 8080,
+        debug: false
       },
       dev: {
         options: {
-          script: 'app.js',
-          debug: true
+          script: 'app.js'
         }
       },
       prod: {
@@ -94,7 +94,7 @@ module.exports = function (grunt) {
           '<%= yeoman.client %>/assets/images/{,*//*}*.{png,jpg,jpeg,gif,webp,svg}'
         ],
         options: {
-          livereload: true
+          livereload: 35730
         }
       },
       express: {
@@ -103,7 +103,7 @@ module.exports = function (grunt) {
         ],
         tasks: ['express:dev', 'wait'],
         options: {
-          livereload: true,
+          livereload: 35730,
           nospawn: true //Without this option specified express won't be reloaded
         }
       }
@@ -189,7 +189,7 @@ module.exports = function (grunt) {
       debug: {
         script: 'app.js',
         options: {
-          nodeArgs: ['--debug-brk'],
+          //nodeArgs: ['--debug-brk'],
           env: {
             PORT: process.env.PORT || 9000
           },
@@ -201,7 +201,7 @@ module.exports = function (grunt) {
             // opens browser on initial server start
             nodemon.on('config:update', function () {
               setTimeout(function () {
-                require('open')('http://localhost:8080/debug?port=5858');
+                require('open')('http://localhost:8080/debug?port=5850');
               }, 500);
             });
           }
@@ -507,7 +507,9 @@ module.exports = function (grunt) {
     jsdoc : {
         dist : {
             src: [
-            '**/*.js',
+            'api/**/*.js',
+            'models/**/*.js',
+            'scrape/**/*.js',
             '!**/*.spec.js',
             'README.md'
           ],

@@ -5,14 +5,68 @@ var cheerio = require('cheerio');
 * Scrape some data from the web
 * @return void
 */
-exports.scrape = function(username){
+exports.scrapeAccount = function(username, password){
   url = 'http://udel.emoneyadvisor.com/SampleAccounts/AccountsSummary?User='+username;
 
   request(url, function(error, response, html){
     if(!error){
       var $ = cheerio.load(html);
 
-      console.log($('h2'));
+      //console.log(html);
+      var basicaccounts = [];
+
+      //Get basic accounts
+      $('#basicAccountsTable').find('tr').slice(1).each(function(index, element){
+        var accountName = $($(element).find('td').get(0)).text();
+        var accountNumber = $($(element).find('td').get(1)).text();
+        var accountDesc = $($(element).find('td').get(2)).text();
+        var accountAvailBalance = $($(element).find('td').get(3)).text().substr(1);
+        var accountTotalBalance = $($(element).find('td').get(4)).text().substr(1);
+        var accountType = $($(element).find('td').get(5)).text();
+        console.log(
+          "Basic account: " +
+          accountName + " " +
+          accountNumber + " " +
+          accountDesc + " " +
+          accountAvailBalance + " " +
+          accountTotalBalance + " " +
+          accountType
+        );
+      });
+
+      //Get loans
+      $('#loanAccountsTable').find('tr').slice(1).each(function(index, element){
+        var accountName = $($(element).find('td').get(0)).text();
+        var accountNumber = $($(element).find('td').get(1)).text();
+        var accountDesc = $($(element).find('td').get(2)).text();
+        var accountBalance = $($(element).find('td').get(3)).text().substr(1);
+        var accountType = $($(element).find('td').get(5)).text();
+        console.log(
+          "Loan: " +
+          accountName + " " +
+          accountNumber + " " +
+          accountDesc + " " +
+          accountBalance + " " +
+          accountType
+        );
+      });
+
+      //Get investments
+      $('#investmentAccountsTable').find('tr').slice(1).each(function(index, element){
+        var accountName = $($(element).find('td').get(0)).text();
+        var accountNumber = $($(element).find('td').get(1)).text();
+        var accountDesc = $($(element).find('td').get(2)).text();
+        var accountBalance = $($(element).find('td').get(3)).text().substr(1);
+        var accountType = $($(element).find('td').get(5)).text();
+        console.log(
+          "Investment: " +
+          accountName + " " +
+          accountNumber + " " +
+          accountDesc + " " +
+          accountBalance + " " +
+          accountType
+        );
+      });
     }
   })
 }
