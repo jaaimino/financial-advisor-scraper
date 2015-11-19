@@ -4,3 +4,5 @@
  */
 
 'use strict';
+
+console.log("!--- Finished populating data ---!");

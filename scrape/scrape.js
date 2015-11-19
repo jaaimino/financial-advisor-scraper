@@ -1,19 +1,29 @@
-var request = require('request');
+//Include cheerio
 var cheerio = require('cheerio');
+
+//Set up requests
+var request = require('request');
+var globalJar = request.jar()
+var request = request.defaults({jar:globalJar})
+
+//Db models
+var Account = require('../models/account.model');
+var Client = require('../models/client.model');
+var BankTransaction = require('../models/banktransaction.model');
+var InvestmentAccount = require('../models/investmentaccount.model');
+var BasicAccount = require('../models/basicaccount.model');
+var Loan = require('../models/loan.model');
 
 /**
 * Scrape some data from the web
 * @return void
 */
-exports.scrapeAccount = function(username, password){
-  url = 'http://udel.emoneyadvisor.com/SampleAccounts/AccountsSummary?User='+username;
+exports.scrapeAccount = function(targetAccount){
+  url = 'http://udel.emoneyadvisor.com/SampleAccounts/AccountsSummary?User='+targetAccount.username;
 
   request(url, function(error, response, html){
     if(!error){
       var $ = cheerio.load(html);
-
-      //console.log(html);
-      var basicaccounts = [];
 
       //Get basic accounts
       $('#basicAccountsTable').find('tr').slice(1).each(function(index, element){
@@ -23,15 +33,36 @@ exports.scrapeAccount = function(username, password){
         var accountAvailBalance = $($(element).find('td').get(3)).text().substr(1);
         var accountTotalBalance = $($(element).find('td').get(4)).text().substr(1);
         var accountType = $($(element).find('td').get(5)).text();
-        console.log(
-          "Basic account: " +
-          accountName + " " +
-          accountNumber + " " +
-          accountDesc + " " +
-          accountAvailBalance + " " +
-          accountTotalBalance + " " +
-          accountType
-        );
+        BasicAccount.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
+          if(err){
+            //console.log("ERROR: :O");
+            return;
+          }
+          //If the account doesn't exist, create it
+          if(accounts.length < 1){
+            var newAccount = new BasicAccount({
+              account : targetAccount._id,
+              name            : accountName,
+              account_number  : accountNumber,
+              description     : accountDesc,
+              available_balance : accountAvailBalance,
+              total_balance   : accountTotalBalance,
+              account_type    : accountType,
+            });
+            newAccount.save();
+            //Otherwise, update the info
+          } else {
+            var oldAccount = accounts[0];
+            oldAccount.account = targetAccount._id;
+            oldAccount.name = accountName;
+            oldAccount.account_number = accountNumber;
+            oldAccount.description = accountDesc;
+            oldAccount.available_balance = accountAvailBalance;
+            oldAccount.total_balance = accountTotalBalance;
+            oldAccount.account_type = accountType;
+            oldAccount.save();
+          }
+        });
       });
 
       //Get loans
@@ -41,14 +72,35 @@ exports.scrapeAccount = function(username, password){
         var accountDesc = $($(element).find('td').get(2)).text();
         var accountBalance = $($(element).find('td').get(3)).text().substr(1);
         var accountType = $($(element).find('td').get(5)).text();
-        console.log(
-          "Loan: " +
-          accountName + " " +
-          accountNumber + " " +
-          accountDesc + " " +
-          accountBalance + " " +
-          accountType
-        );
+        Loan.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
+          if(err){
+            //console.log("ERROR: :O");
+            return;
+          }
+          //If the account doesn't exist, create it
+          //console.log("Target account id: " + targetAccount._id);
+          if(accounts.length < 1){
+            var newAccount = new Loan({
+              account : targetAccount._id,
+              name            : accountName,
+              account_number  : accountNumber,
+              description     : accountDesc,
+              balance : accountBalance,
+              account_type    : accountType,
+            });
+            newAccount.save();
+            //Otherwise, update the info
+          } else {
+            var oldAccount = accounts[0];
+            oldAccount.account = targetAccount._id;
+            oldAccount.name = accountName;
+            oldAccount.account_number = accountNumber;
+            oldAccount.description = accountDesc;
+            oldAccount.balaance = accountBalance;
+            oldAccount.account_type = accountType;
+            oldAccount.save();
+          }
+        });
       });
 
       //Get investments
@@ -58,14 +110,35 @@ exports.scrapeAccount = function(username, password){
         var accountDesc = $($(element).find('td').get(2)).text();
         var accountBalance = $($(element).find('td').get(3)).text().substr(1);
         var accountType = $($(element).find('td').get(5)).text();
-        console.log(
-          "Investment: " +
-          accountName + " " +
-          accountNumber + " " +
-          accountDesc + " " +
-          accountBalance + " " +
-          accountType
-        );
+        InvestmentAccount.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
+          if(err){
+            //console.log("ERROR: :O");
+            return;
+          }
+          //If the account doesn't exist, create it
+          //console.log("Target account id: " + targetAccount._id);
+          if(accounts.length < 1){
+            var newAccount = new InvestmentAccount({
+              account : targetAccount._id,
+              name            : accountName,
+              account_number  : accountNumber,
+              description     : accountDesc,
+              balance : accountBalance,
+              account_type    : accountType,
+            });
+            newAccount.save();
+            //Otherwise, update the info
+          } else {
+            var oldAccount = accounts[0];
+            oldAccount.account = targetAccount._id;
+            oldAccount.name = accountName;
+            oldAccount.account_number = accountNumber;
+            oldAccount.description = accountDesc;
+            oldAccount.balaance = accountBalance;
+            oldAccount.account_type = accountType;
+            oldAccount.save();
+          }
+        });
       });
     }
   })
@@ -80,7 +153,7 @@ exports.login = function(){
   request.get(url, function(error, response, html){
     var $ = cheerio.load(html); //Load in html for parsing
     var token = $('#LoginForm').find('input')[0].attribs['value'];
-    console.log("Token: " + token);
+    //console.log("Token: " + token);
     request.post(url, {
       formData:{
         Username:'Test',
@@ -89,8 +162,9 @@ exports.login = function(){
       }
     },
     function(err,httpResponse,body){
-      console.log(err);
-      console.log(body);
+      //console.log(globalJar);
+      //console.log(err);
+      //console.log(body);
     })
   });
 }

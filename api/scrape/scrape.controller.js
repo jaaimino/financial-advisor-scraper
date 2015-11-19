@@ -12,11 +12,12 @@ var scrape = require('../../scrape/scrape');
 // Scrape data for all accounts
 exports.index = function(req, res) {
 
-  Account.find(function (err, accounts) {
+  Account.find({}, function (err, accounts) {
     if(err) { return handleError(res, err); }
+    scrape.login();
     for(var i=0; i < accounts.length; i++){
       var account = accounts[i];
-      scrape.scrapeAccount(account.username, account.password);
+      scrape.scrapeAccount(account);
     }
     return res.status(200).json(accounts);
   });
@@ -27,6 +28,8 @@ exports.show = function(req, res) {
   Account.findById(req.params.id, function (err, account) {
     if(err) { return handleError(res, err); }
     if(!account) { return res.status(404).send('Not Found'); }
+    scrape.login();
+    scrape.scrapeAccount(account);
     return res.json(account);
   });
 };
