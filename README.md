@@ -1,7 +1,7 @@
-# Financial Advisor App #
-[![Build Status](https://travis-ci.org/jaaimino/financial-advisor-app.svg?branch=master)](https://travis-ci.org/jaaimino/financial-advisor-app)
+# Financial Advisor Scraper #
+[![Build Status](https://travis-ci.org/jaaimino/financial-advisor-scraper.svg?branch=master)](https://travis-ci.org/jaaimino/financial-advisor-scraper)
 
-This repo is for the app side of the financial advisor app project for my final software engineering
+This repo is for the scraper side of the financial advisor app project for my final software engineering
 course at UD.
 
 ### What do I need? ###
@@ -20,4 +20,4 @@ Run `grunt serve` to preview
 Running `grunt test` will run the unit tests with karma.
 
 ### Also See ###
-[Financial Advisor Scraper](https://github.com/jaaimino/financial-advisor-scraper)
+[Financial Advisor App](https://github.com/jaaimino/financial-advisor-app)
