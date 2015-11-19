@@ -162,7 +162,7 @@ exports.login = function(){
       }
     },
     function(err,httpResponse,body){
-      //console.log(globalJar);
+      //console.log("Cookie Jar: " + globalJar);
       //console.log(err);
       //console.log(body);
     })
