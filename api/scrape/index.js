@@ -7,6 +7,7 @@ var config = require('../../config/environment');
 var router = express.Router();
 
 router.get('/', controller.index);
-router.get('/:id', controller.show);
+router.get('/client/:id', controller.singleclient);
+router.get('/client/:id/:accId', controller.singleaccount);
 
 module.exports = router;

@@ -4,6 +4,12 @@ var should = require('should');
 var app = require('../../app');
 var request = require('supertest');
 
+/**
+ * Refresh all clients data
+ * @param  {[type]} 'GET      /api/scrape'  [description]
+ * @param  {[type]} function( [description]
+ * @return {[type]}           [description]
+ */
 describe('GET /api/scrape', function() {
   it('should respond with JSON array', function(done) {
     request(app)
