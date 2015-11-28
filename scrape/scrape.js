@@ -104,61 +104,57 @@ function scrapeTransactions(targetBasicAccount, subUrl){
 
       $('#BankTransTable').find('div .Row').slice(1).each(function(index, element){
 
-        var transactionName = $($(element).find('div .Cell').get(0)).children().text();
+        var transactionDate = $($(element).find('div .Cell').get(0)).children().text();
         var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
         var transactionAmount = $($(element).find('div .Cell').get(2)).children().text().substr(1);
         var transactionCurrencyCode = $($(element).find('div .Cell').get(3)).children().text();
         var transactionMerchantName = $($(element).find('div .Cell').get(4)).children().text();
         var transactionMerchantCategory = $($(element).find('div .Cell').get(5)).children().text();
 
-        console.log(transactionName + " " + transactionDesc + " " + transactionAmount);
-      });
+        console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
+      
 
-      /*
-      BasicAccount.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
+      
+      BankTransaction.find({account: targetBasicAccount._id}, function(err, transaction){
         if(err){
           //console.log("ERROR: :O");
           return;
         }
-        //If the account doesn't exist, create it
-        if(accounts.length < 1){
-          var newAccount = new BasicAccount({
-            account : targetAccount._id,
-            name            : accountName,
-            account_number  : accountNumber,
-            description     : accountDesc,
-            available_balance : accountAvailBalance,
-            total_balance   : accountTotalBalance,
-            account_type    : accountType,
+        //If the transaction doesn't exist, create it
+        if(transaction.length < 1){
+          var newTransaction = new BankTransaction({
+            account         : targetBasicAccount._id,
+            date            : transactionDate,
+            description     : transactionDesc,
+            amount          : transactionAmount,
+            currency_codes  : transactionCurrencyCode,
+            merchant_name   : transactionMerchantName,
+            merchant_cate   : transactionMerchantCategory,
           });
-          newAccount.save();
-
-          //If we have a link, get that data
-          if(link.attr('href')){
-            scrapeTransactions(newAccount, link.attr('href'));
-          }
+          newTransaction.save();
 
           //Otherwise, update the info
         } else {
-          var oldAccount = accounts[0];
-          oldAccount.account = targetAccount._id;
-          oldAccount.name = accountName;
-          oldAccount.account_number = accountNumber;
-          oldAccount.description = accountDesc;
-          oldAccount.available_balance = accountAvailBalance;
-          oldAccount.total_balance = accountTotalBalance;
-          oldAccount.account_type = accountType;
-          oldAccount.save();
+          var oldTransaction = transaction[0];
+          oldTransaction.account = targetBasicAccount._id;
+          oldTransaction.date = transactionDate;
+          oldTransaction.description = transactionDesc;
+          oldTransaction.amount = transactionAmount;
+          oldTransaction.currency_codes = transactionCurrencyCode;
+          oldTransaction.merchant_name = transactionMerchantName;
+          oldTransaction.merchant_cate = transactionMerchantCategory;
+          oldTransaction.save();
 
           //If we have a link, get that data
           if(link.attr('href')){
-            scrapeTransactions(oldAccount, link.attr('href'));
+            scrapeTransactions(oldTransaction, link.attr('href'));
           }
         }
       });
-      */
+      });
     }
   })
+
 }
 
 /**
