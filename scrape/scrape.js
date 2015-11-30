@@ -33,11 +33,11 @@ exports.scrapeAccount = function(targetAccount){
 }
 
 /**
- * Scrape basic accounts and put into database
- * @param  {account} targetAccount
- * @param  {cheerio object} $
- * @return {void}
- */
+* Scrape basic accounts and put into database
+* @param  {account} targetAccount
+* @param  {cheerio object} $
+* @return {void}
+*/
 function scrapeBasicAccounts(targetAccount, $){
   //Get basic accounts
   $('#basicAccountsTable').find('tr').slice(1).each(function(index, element){
@@ -88,6 +88,7 @@ function scrapeBasicAccounts(targetAccount, $){
 
         //If we have a link, get that data
         if(link.attr('href')){
+          console.log("Link: " + link.attr('href'));
           scrapeTransactions(oldAccount, link.attr('href'));
         }
       }
@@ -111,46 +112,47 @@ function scrapeTransactions(targetBasicAccount, subUrl){
         var transactionMerchantName = $($(element).find('div .Cell').get(4)).children().text();
         var transactionMerchantCategory = $($(element).find('div .Cell').get(5)).children().text();
 
-        console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
-      
+        //console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
 
-      
-      BankTransaction.find({account: targetBasicAccount._id}, function(err, transaction){
-        if(err){
-          //console.log("ERROR: :O");
-          return;
-        }
-        //If the transaction doesn't exist, create it
-        if(transaction.length < 1){
-          var newTransaction = new BankTransaction({
-            account         : targetBasicAccount._id,
-            date            : transactionDate,
-            description     : transactionDesc,
-            amount          : transactionAmount,
-            currency_codes  : transactionCurrencyCode,
-            merchant_name   : transactionMerchantName,
-            merchant_cate   : transactionMerchantCategory,
-          });
-          newTransaction.save();
-
-          //Otherwise, update the info
-        } else {
-          var oldTransaction = transaction[0];
-          oldTransaction.account = targetBasicAccount._id;
-          oldTransaction.date = transactionDate;
-          oldTransaction.description = transactionDesc;
-          oldTransaction.amount = transactionAmount;
-          oldTransaction.currency_codes = transactionCurrencyCode;
-          oldTransaction.merchant_name = transactionMerchantName;
-          oldTransaction.merchant_cate = transactionMerchantCategory;
-          oldTransaction.save();
-
-          //If we have a link, get that data
-          if(link.attr('href')){
-            scrapeTransactions(oldTransaction, link.attr('href'));
+        BankTransaction.find({
+          account : targetBasicAccount._id,
+          description     : transactionDesc,
+          amount          : transactionAmount,
+          currency_codes  : transactionCurrencyCode,
+          merchant_name   : transactionMerchantName,
+          merchant_category   : transactionMerchantCategory,
+        },
+        function(err, transactions){
+          if(err){
+            //console.log("ERROR: :O");
+            return;
           }
-        }
-      });
+          //If the transaction doesn't exist, create it
+          if(transactions.length < 1){
+            var newTransaction = new BankTransaction({
+              account         : targetBasicAccount._id,
+              date            : transactionDate,
+              description     : transactionDesc,
+              amount          : transactionAmount,
+              currency_codes  : transactionCurrencyCode,
+              merchant_name   : transactionMerchantName,
+              merchant_category   : transactionMerchantCategory,
+            });
+            newTransaction.save();
+
+            //Otherwise, update the info
+          } else {
+            var oldTransaction = transactions[0];
+            oldTransaction.account = targetBasicAccount._id;
+            oldTransaction.date = transactionDate;
+            oldTransaction.description = transactionDesc;
+            oldTransaction.amount = transactionAmount;
+            oldTransaction.currency_codes = transactionCurrencyCode;
+            oldTransaction.merchant_name = transactionMerchantName;
+            oldTransaction.merchant_category = transactionMerchantCategory;
+            oldTransaction.save();
+          }
+        });
       });
     }
   })
@@ -158,11 +160,11 @@ function scrapeTransactions(targetBasicAccount, subUrl){
 }
 
 /**
- * Scrape loans and put into database
- * @param  {account} targetAccount
- * @param  {cheerio object} $
- * @return {void}
- */
+* Scrape loans and put into database
+* @param  {account} targetAccount
+* @param  {cheerio object} $
+* @return {void}
+*/
 function scrapeLoans(targetAccount, $){
   //Get loans
   $('#loanAccountsTable').find('tr').slice(1).each(function(index, element){
@@ -204,11 +206,11 @@ function scrapeLoans(targetAccount, $){
 }
 
 /**
- * Scrape investment accounts and put into database
- * @param  {account} targetAccount
- * @param  {cheerio object} $
- * @return {void}
- */
+* Scrape investment accounts and put into database
+* @param  {account} targetAccount
+* @param  {cheerio object} $
+* @return {void}
+*/
 function scrapeInvestmentAccounts(targetAccount, $){
   //Get investments
   $('#investmentAccountsTable').find('tr').slice(1).each(function(index, element){
