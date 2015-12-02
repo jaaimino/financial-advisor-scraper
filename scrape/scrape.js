@@ -94,7 +94,7 @@ function scrapeBasicAccounts(targetAccount, $){
 
         //If we have a link, get that data
         if(link.attr('href')){
-          console.log("Link: " + link.attr('href'));
+          //console.log("Link: " + link.attr('href'));
           scrapeTransactions(oldAccount, link.attr('href'));
         }
       }
@@ -167,7 +167,6 @@ function scrapeTransactions(targetBasicAccount, subUrl){
       });
     }
   })
-
 }
 
 /**
@@ -229,7 +228,11 @@ function scrapeInvestmentAccounts(targetAccount, $){
     var accountNumber = $($(element).find('td').get(1)).text();
     var accountDesc = $($(element).find('td').get(2)).text();
     var accountBalance = $($(element).find('td').get(3)).text().slice(1);
-    var accountType = $($(element).find('td').get(5)).text();
+    var accountType = $($(element).find('td').get(4)).text();
+
+    //Check for available holdings
+    var link = $($(element).find('td').find('a'));
+
     InvestmentAccount.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
       if(err){
         //console.log("ERROR: :O");
@@ -247,6 +250,11 @@ function scrapeInvestmentAccounts(targetAccount, $){
           account_type    : accountType,
         });
         newAccount.save();
+        //If we have a link, get that data
+        if(link.attr('href')){
+          //console.log("Link: " + link.attr('href'));
+          scrapeTransactions(newAccount, link.attr('href'));
+        }
         //Otherwise, update the info
       } else {
         var oldAccount = accounts[0];
@@ -257,9 +265,83 @@ function scrapeInvestmentAccounts(targetAccount, $){
         oldAccount.balaance = accountBalance;
         oldAccount.account_type = accountType;
         oldAccount.save();
+        //If we have a link, get that data
+        if(link.attr('href')){
+          //console.log("Link: " + link.attr('href'));
+          scrapeHoldings(oldAccount, link.attr('href'));
+        }
       }
     });
   });
+}
+
+function scrapeHoldings(targetBasicAccount, subUrl){
+  url = 'http://udel.emoneyadvisor.com'+subUrl;
+
+  //console.log("Getting holdings: " + subUrl);
+  
+  request(url, function(error, response, html){
+    if(!error){
+      var $ = cheerio.load(html);
+      /*
+      $('#BankTransTable').find('div .Row').slice(1).each(function(index, element){
+
+        var transactionDate = $($(element).find('div .Cell').get(0)).children().text();
+        var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
+        var transactionAmount = $($(element).find('div .Cell').get(2)).children().text();
+        var transactionAmountNumber = transactionAmount.slice(2);
+        var transactionPositive = !(transactionAmount.slice(0,1) === "-");
+        var transactionCurrencyCode = $($(element).find('div .Cell').get(3)).children().text();
+        var transactionMerchantName = $($(element).find('div .Cell').get(4)).children().text();
+        var transactionMerchantCategory = $($(element).find('div .Cell').get(5)).children().text();
+
+        //console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
+        BankTransaction.find({
+          account : targetBasicAccount._id,
+          description     : transactionDesc,
+          amount          : transactionAmountNumber,
+          currency_codes  : transactionCurrencyCode,
+          positive        : transactionPositive,
+          merchant_name   : transactionMerchantName,
+          merchant_category   : transactionMerchantCategory,
+        },
+        function(err, transactions){
+          if(err){
+            //console.log("ERROR: " + err);
+            return;
+          }
+          //If the transaction doesn't exist, create it
+          if(transactions.length < 1){
+            var newTransaction = new BankTransaction({
+              account         : targetBasicAccount._id,
+              date            : transactionDate,
+              positive        : transactionPositive,
+              description     : transactionDesc,
+              amount          : transactionAmountNumber,
+              currency_codes  : transactionCurrencyCode,
+              merchant_name   : transactionMerchantName,
+              merchant_category   : transactionMerchantCategory,
+            });
+            newTransaction.save();
+
+            //Otherwise, update the info
+          } else {
+            var oldTransaction = transactions[0];
+            oldTransaction.account = targetBasicAccount._id;
+            oldTransaction.date = transactionDate;
+            oldTransaction.positive = transactionPositive;
+            oldTransaction.description = transactionDesc;
+            oldTransaction.amount = transactionAmountNumber;
+            oldTransaction.currency_codes = transactionCurrencyCode;
+            oldTransaction.merchant_name = transactionMerchantName;
+            oldTransaction.merchant_category = transactionMerchantCategory;
+            oldTransaction.save();
+          }
+        });
+      });
+      */
+    }
+  })
 }
 
 /**
