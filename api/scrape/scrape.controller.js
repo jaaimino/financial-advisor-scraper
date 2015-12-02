@@ -32,7 +32,7 @@ exports.singleclient = function(req, res) {
       var account = accounts[i];
       scrape.scrapeAccount(account);
     }
-    return res.json(accounts);
+    return res.json(account);
   });
 };
 

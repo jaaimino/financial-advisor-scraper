@@ -44,8 +44,14 @@ function scrapeBasicAccounts(targetAccount, $){
     var accountName = $($(element).find('td').get(0)).text();
     var accountNumber = $($(element).find('td').get(1)).text();
     var accountDesc = $($(element).find('td').get(2)).text();
-    var accountAvailBalance = $($(element).find('td').get(3)).text().substr(1);
-    var accountTotalBalance = $($(element).find('td').get(4)).text().substr(1);
+    var accountAvailBalance = $($(element).find('td').get(3)).text();
+    if(accountAvailBalance.indexOf("$") > -1){
+      accountAvailBalance = accountAvailBalance.slice(1);
+    }
+    var accountTotalBalance = $($(element).find('td').get(4)).text();
+    if(accountTotalBalance.indexOf("$") > -1){
+      accountTotalBalance = accountTotalBalance.slice(1);
+    }
     var accountType = $($(element).find('td').get(5)).text();
 
     //Check for available transactions
@@ -107,7 +113,9 @@ function scrapeTransactions(targetBasicAccount, subUrl){
 
         var transactionDate = $($(element).find('div .Cell').get(0)).children().text();
         var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
-        var transactionAmount = $($(element).find('div .Cell').get(2)).children().text().substr(1);
+        var transactionAmount = $($(element).find('div .Cell').get(2)).children().text();
+        var transactionAmountNumber = transactionAmount.slice(2);
+        var transactionPositive = !(transactionAmount.slice(0,1) === "-");
         var transactionCurrencyCode = $($(element).find('div .Cell').get(3)).children().text();
         var transactionMerchantName = $($(element).find('div .Cell').get(4)).children().text();
         var transactionMerchantCategory = $($(element).find('div .Cell').get(5)).children().text();
@@ -117,14 +125,15 @@ function scrapeTransactions(targetBasicAccount, subUrl){
         BankTransaction.find({
           account : targetBasicAccount._id,
           description     : transactionDesc,
-          amount          : transactionAmount,
+          amount          : transactionAmountNumber,
           currency_codes  : transactionCurrencyCode,
+          positive        : transactionPositive,
           merchant_name   : transactionMerchantName,
           merchant_category   : transactionMerchantCategory,
         },
         function(err, transactions){
           if(err){
-            //console.log("ERROR: :O");
+            //console.log("ERROR: " + err);
             return;
           }
           //If the transaction doesn't exist, create it
@@ -132,8 +141,9 @@ function scrapeTransactions(targetBasicAccount, subUrl){
             var newTransaction = new BankTransaction({
               account         : targetBasicAccount._id,
               date            : transactionDate,
+              positive        : transactionPositive,
               description     : transactionDesc,
-              amount          : transactionAmount,
+              amount          : transactionAmountNumber,
               currency_codes  : transactionCurrencyCode,
               merchant_name   : transactionMerchantName,
               merchant_category   : transactionMerchantCategory,
@@ -145,8 +155,9 @@ function scrapeTransactions(targetBasicAccount, subUrl){
             var oldTransaction = transactions[0];
             oldTransaction.account = targetBasicAccount._id;
             oldTransaction.date = transactionDate;
+            oldTransaction.positive = transactionPositive;
             oldTransaction.description = transactionDesc;
-            oldTransaction.amount = transactionAmount;
+            oldTransaction.amount = transactionAmountNumber;
             oldTransaction.currency_codes = transactionCurrencyCode;
             oldTransaction.merchant_name = transactionMerchantName;
             oldTransaction.merchant_category = transactionMerchantCategory;
@@ -171,7 +182,7 @@ function scrapeLoans(targetAccount, $){
     var accountName = $($(element).find('td').get(0)).text();
     var accountNumber = $($(element).find('td').get(1)).text();
     var accountDesc = $($(element).find('td').get(2)).text();
-    var accountBalance = $($(element).find('td').get(3)).text().substr(1);
+    var accountBalance = $($(element).find('td').get(3)).text().slice(1);
     var accountType = $($(element).find('td').get(5)).text();
     Loan.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
       if(err){
@@ -217,7 +228,7 @@ function scrapeInvestmentAccounts(targetAccount, $){
     var accountName = $($(element).find('td').get(0)).text();
     var accountNumber = $($(element).find('td').get(1)).text();
     var accountDesc = $($(element).find('td').get(2)).text();
-    var accountBalance = $($(element).find('td').get(3)).text().substr(1);
+    var accountBalance = $($(element).find('td').get(3)).text().slice(1);
     var accountType = $($(element).find('td').get(5)).text();
     InvestmentAccount.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
       if(err){
