@@ -110,8 +110,8 @@ function scrapeTransactions(targetBasicAccount, subUrl){
       var $ = cheerio.load(html);
 
       $('#BankTransTable').find('div .Row').slice(1).each(function(index, element){
-
-        var transactionDate = $($(element).find('div .Cell').get(0)).children().text();
+        var strDateParts = ($($(element).find('div .Cell').get(0)).children().text()).split('/');
+        var transactionDate = new Date(strDateParts[2],strDateParts[0]-1,strDateParts[1]);
         var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
         var transactionAmount = $($(element).find('div .Cell').get(2)).children().text();
         var transactionAmountNumber = transactionAmount.slice(2);
@@ -140,7 +140,7 @@ function scrapeTransactions(targetBasicAccount, subUrl){
           if(transactions.length < 1){
             var newTransaction = new BankTransaction({
               account         : targetBasicAccount._id,
-              date            : transactionDate,
+              added            : transactionDate,
               positive        : transactionPositive,
               description     : transactionDesc,
               amount          : transactionAmountNumber,
@@ -154,7 +154,7 @@ function scrapeTransactions(targetBasicAccount, subUrl){
           } else {
             var oldTransaction = transactions[0];
             oldTransaction.account = targetBasicAccount._id;
-            oldTransaction.date = transactionDate;
+            oldTransaction.added = transactionDate;
             oldTransaction.positive = transactionPositive;
             oldTransaction.description = transactionDesc;
             oldTransaction.amount = transactionAmountNumber;
