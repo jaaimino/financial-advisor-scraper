@@ -182,7 +182,7 @@ function scrapeLoans(targetAccount, $){
     var accountNumber = $($(element).find('td').get(1)).text();
     var accountDesc = $($(element).find('td').get(2)).text();
     var accountBalance = $($(element).find('td').get(3)).text().slice(1);
-    var accountType = $($(element).find('td').get(5)).text();
+    var accountType = $($(element).find('td').get(4)).text();
     Loan.find({account: targetAccount._id, account_number:accountNumber}, function(err, accounts){
       if(err){
         //console.log("ERROR: :O");
@@ -279,7 +279,7 @@ function scrapeHoldings(targetBasicAccount, subUrl){
   url = 'http://udel.emoneyadvisor.com'+subUrl;
 
   //console.log("Getting holdings: " + subUrl);
-  
+
   request(url, function(error, response, html){
     if(!error){
       var $ = cheerio.load(html);
