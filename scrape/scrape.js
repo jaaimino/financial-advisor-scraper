@@ -11,6 +11,7 @@ var Account = require('../models/account.model');
 var Client = require('../models/client.model');
 var BankTransaction = require('../models/banktransaction.model');
 var InvestmentAccount = require('../models/investmentaccount.model');
+var Holdings = require('../models/holdings.model');
 var BasicAccount = require('../models/basicaccount.model');
 var Loan = require('../models/loan.model');
 
@@ -293,7 +294,8 @@ function scrapeHoldings(targetBasicAccount, subUrl){
         var transCB = $($(element).find('div .Cell').get(5)).children().text();
         var transAq = $($(element).find('div .Cell').get(6)).children().text();
 
-        //console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
+        //console.log(transTicker + " " + transCusip + " " + transDesc + " " +
+        //transUnits + " " + transPrice + " " + transCB + " " + transAq);
         Holdings.find({
             account     : targetBasicAccount._id,
             ticker      : transTicker,
