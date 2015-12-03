@@ -283,63 +283,58 @@ function scrapeHoldings(targetBasicAccount, subUrl){
   request(url, function(error, response, html){
     if(!error){
       var $ = cheerio.load(html);
-      /*
-      $('#BankTransTable').find('div .Row').slice(1).each(function(index, element){
+      $('#HoldingsTable').find('div .Row').slice(1).each(function(index, element){
 
-        var transactionDate = $($(element).find('div .Cell').get(0)).children().text();
-        var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
-        var transactionAmount = $($(element).find('div .Cell').get(2)).children().text();
-        var transactionAmountNumber = transactionAmount.slice(2);
-        var transactionPositive = !(transactionAmount.slice(0,1) === "-");
-        var transactionCurrencyCode = $($(element).find('div .Cell').get(3)).children().text();
-        var transactionMerchantName = $($(element).find('div .Cell').get(4)).children().text();
-        var transactionMerchantCategory = $($(element).find('div .Cell').get(5)).children().text();
+        var transTicker = $($(element).find('div .Cell').get(0)).children().text();
+        var transCusip = $($(element).find('div .Cell').get(1)).children().text();
+        var transDesc = $($(element).find('div .Cell').get(2)).children().text();
+        var transUnits = $($(element).find('div .Cell').get(3)).children().text();
+        var transPrice = $($(element).find('div .Cell').get(4)).children().text();
+        var transCB = $($(element).find('div .Cell').get(5)).children().text();
+        var transAq = $($(element).find('div .Cell').get(6)).children().text();
 
         //console.log(transactionDate + " " + transactionDesc + " " + transactionAmount + " " + transactionCurrencyCode + " " + transactionMerchantName + " " + transactionMerchantCategory);
-        BankTransaction.find({
-          account : targetBasicAccount._id,
-          description     : transactionDesc,
-          amount          : transactionAmountNumber,
-          currency_codes  : transactionCurrencyCode,
-          positive        : transactionPositive,
-          merchant_name   : transactionMerchantName,
-          merchant_category   : transactionMerchantCategory,
+        Holdings.find({
+            account     : targetBasicAccount._id,
+            ticker      : transTicker,
+            cusip       : transCusip,
+            description     : transDesc,
         },
-        function(err, transactions){
+        function(err, holdings){
           if(err){
             //console.log("ERROR: " + err);
             return;
           }
           //If the transaction doesn't exist, create it
-          if(transactions.length < 1){
-            var newTransaction = new BankTransaction({
-              account         : targetBasicAccount._id,
-              date            : transactionDate,
-              positive        : transactionPositive,
-              description     : transactionDesc,
-              amount          : transactionAmountNumber,
-              currency_codes  : transactionCurrencyCode,
-              merchant_name   : transactionMerchantName,
-              merchant_category   : transactionMerchantCategory,
+          if(holdings.length < 1){
+            var newHoldings = new Holdings({
+                account         : targetBasicAccount._id,
+                ticker          : transTicker,
+                cusip           : transCusip,
+                description     : transDesc,
+                units           : transUnits,
+                price           : transPrice,
+                cost_basis      : transCB,
+                aquired         : transAq,
             });
-            newTransaction.save();
+            newHoldings.save();
 
             //Otherwise, update the info
           } else {
-            var oldTransaction = transactions[0];
-            oldTransaction.account = targetBasicAccount._id;
-            oldTransaction.date = transactionDate;
-            oldTransaction.positive = transactionPositive;
-            oldTransaction.description = transactionDesc;
-            oldTransaction.amount = transactionAmountNumber;
-            oldTransaction.currency_codes = transactionCurrencyCode;
-            oldTransaction.merchant_name = transactionMerchantName;
-            oldTransaction.merchant_category = transactionMerchantCategory;
-            oldTransaction.save();
+            var oldHoldings = holdings[0];
+            oldHoldings.account = targetBasicAccount._id;
+            oldHoldings.ticker = transTicker;
+            oldHoldings.cusip = transCusip;
+            oldHoldings.description = transDesc;
+            oldHoldings.units = transUnits;
+            oldHoldings.price = transPrice;
+            oldHoldings.cost_basis = transCB;
+            oldHoldings.aquired = transAq;
+
+            oldHoldings.save();
           }
         });
       });
-      */
     }
   })
 }
