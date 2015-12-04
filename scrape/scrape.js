@@ -110,7 +110,7 @@ function scrapeTransactions(targetBasicAccount, subUrl){
     if(!error){
       var $ = cheerio.load(html);
 
-      $('#BankTransTable').find('div .Row').slice(1).each(function(index, element){
+      $('#BankTransTable').find('div .Row').each(function(index, element){
         var strDateParts = ($($(element).find('div .Cell').get(0)).children().text()).split('/');
         var transactionDate = new Date(strDateParts[2],strDateParts[0]-1,strDateParts[1]);
         var transactionDesc = $($(element).find('div .Cell').get(1)).children().text();
@@ -253,8 +253,7 @@ function scrapeInvestmentAccounts(targetAccount, $){
         newAccount.save();
         //If we have a link, get that data
         if(link.attr('href')){
-          //console.log("Link: " + link.attr('href'));
-          scrapeTransactions(newAccount, link.attr('href'));
+          scrapeHoldings(newAccount, link.attr('href'));
         }
         //Otherwise, update the info
       } else {
@@ -268,7 +267,6 @@ function scrapeInvestmentAccounts(targetAccount, $){
         oldAccount.save();
         //If we have a link, get that data
         if(link.attr('href')){
-          //console.log("Link: " + link.attr('href'));
           scrapeHoldings(oldAccount, link.attr('href'));
         }
       }
@@ -284,18 +282,27 @@ function scrapeHoldings(targetBasicAccount, subUrl){
   request(url, function(error, response, html){
     if(!error){
       var $ = cheerio.load(html);
-      $('#HoldingsTable').find('div .Row').slice(1).each(function(index, element){
+      $('#HoldingsTable').find('tr').slice(1).each(function(index, element){
 
-        var transTicker = $($(element).find('div .Cell').get(0)).children().text();
-        var transCusip = $($(element).find('div .Cell').get(1)).children().text();
-        var transDesc = $($(element).find('div .Cell').get(2)).children().text();
-        var transUnits = $($(element).find('div .Cell').get(3)).children().text();
-        var transPrice = $($(element).find('div .Cell').get(4)).children().text();
-        var transCB = $($(element).find('div .Cell').get(5)).children().text();
-        var transAq = $($(element).find('div .Cell').get(6)).children().text();
+        //console.log($(element).html());
+
+        var transTicker = $($(element).find('td').get(0)).text().trim();
+        var transCusip = $($(element).find('td').get(1)).text().trim();
+        var transDesc = $($(element).find('td').get(2)).text().trim();
+        var transUnits = $($(element).find('td').get(3)).text().trim();
+        var transPrice = $($(element).find('td').get(4)).text().trim();
+        if(transPrice.indexOf("$") > -1){
+          transPrice = transPrice.slice(1);
+        }
+        var transCB = $($(element).find('td').get(5)).text().trim();
+        if(transCB.indexOf("$") > -1){
+          transCB = transCB.slice(1);
+        }
+        var transAcq = $($(element).find('td').get(6)).text().trim();
 
         //console.log(transTicker + " " + transCusip + " " + transDesc + " " +
-        //transUnits + " " + transPrice + " " + transCB + " " + transAq);
+        //transUnits + " " + transPrice + " " + transCB + " " + transAcq);
+
         Holdings.find({
             account     : targetBasicAccount._id,
             ticker      : transTicker,
@@ -304,7 +311,7 @@ function scrapeHoldings(targetBasicAccount, subUrl){
         },
         function(err, holdings){
           if(err){
-            //console.log("ERROR: " + err);
+            console.log("ERROR: " + err);
             return;
           }
           //If the transaction doesn't exist, create it
@@ -317,10 +324,9 @@ function scrapeHoldings(targetBasicAccount, subUrl){
                 units           : transUnits,
                 price           : transPrice,
                 cost_basis      : transCB,
-                aquired         : transAq,
+                acquired         : transAcq,
             });
             newHoldings.save();
-
             //Otherwise, update the info
           } else {
             var oldHoldings = holdings[0];
@@ -331,7 +337,7 @@ function scrapeHoldings(targetBasicAccount, subUrl){
             oldHoldings.units = transUnits;
             oldHoldings.price = transPrice;
             oldHoldings.cost_basis = transCB;
-            oldHoldings.aquired = transAq;
+            oldHoldings.acquired = transAcq;
 
             oldHoldings.save();
           }
